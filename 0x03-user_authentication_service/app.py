@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=['GET'])
-def hello_world():
+def hello_user():
     return jsonify({"message": "Bienvenue"})
 
 
@@ -35,6 +35,17 @@ def login():
         res.set_cookie('session_id', session_id)
         return res
     return abort(401)
+
+
+@app.route("/sessions", methods=['DELETE'])
+def logout():
+    sess_id = request.cookies.get('session_id')
+    user = AUTH.get_user_from_session_id(sess_id)
+    if user:
+        AUTH.destroy_session(user.id)
+        return redirect(url_for('hello_user'))
+    else:
+        abort(403)
 
 
 if __name__ == "__main__":

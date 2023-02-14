@@ -39,7 +39,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         """find user data
         """
         if not kwargs:
@@ -50,3 +50,16 @@ class DB:
             raise NoResultFound(f"Not found")
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update a user by keyword arguments
+        """
+        user = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if key not in ["id", "email", "hashed_password", "session_id",
+                           "reset_token"]:
+                raise ValueError(f"Invalid")
+
+            setattr(user, key, value)
+        self._session.commit()
+        return None

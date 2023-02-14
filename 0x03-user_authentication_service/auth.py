@@ -57,4 +57,3 @@ class Auth:
             return uid
         except NoResultFound:
             return None
-

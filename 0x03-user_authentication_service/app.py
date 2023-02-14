@@ -10,12 +10,16 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=['GET'])
-def hello_user():
+def hello():
+    """welcoming user
+    """
     return jsonify({"message": "Bienvenue"})
 
 
 @app.route("/users", methods=['POST'])
 def users():
+    """login email
+    """
     email = request.form['email']
     password = request.form['password']
     try:
@@ -27,6 +31,8 @@ def users():
 
 @app.route("/sessions", methods=['POST'])
 def login():
+    """login user
+    """
     email = request.form['email']
     password = request.form['password']
     if(AUTH.valid_login(email, password)):
@@ -39,11 +45,13 @@ def login():
 
 @app.route("/sessions", methods=['DELETE'])
 def logout():
+    """ logout user
+    """
     sess_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(sess_id)
     if user:
         AUTH.destroy_session(user.id)
-        return redirect("/")
+        return redirect(url_for("hello"))
     else:
         abort(403)
 

@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 """DB module
 """
 from sqlalchemy import create_engine
@@ -19,6 +19,7 @@ class DB:
         """Initialize a new DB instance
         """
         self._engine = create_engine("sqlite:///a.db", echo=False)
+        # set echo to False to not see QUERY STATEMENT output
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -38,15 +39,17 @@ class DB:
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
         self._session.commit()
+        # self._session.close()
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """find user data
+        """Find a user by keyword arguments
         """
         if not kwargs:
             raise InvalidRequestError(f"Invalid")
 
         user = self._session.query(User).filter_by(**kwargs).first()
+        # self._session.close()
         if user is None:
             raise NoResultFound(f"Not found")
 
@@ -63,4 +66,5 @@ class DB:
 
             setattr(user, key, value)
         self._session.commit()
+        # self._session.close()
         return None
